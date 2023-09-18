@@ -1,0 +1,9 @@
+[submodule "gmssl"]
+	path = gmssl
+	url = https://github.com/guanzhi/GmSSL
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/openssl/openssl.git
+[submodule "tengine"]
+	path = tengine
+	url = https://github.com/alibaba/tengine.git
