@@ -1,1 +1,1 @@
-FROM homqyy/centos8_dev_env
+FROM homqyy/dev_env_centos8
