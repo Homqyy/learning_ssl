@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "rsbondi.highlight-words",
+        "ms-vscode.cpptools",
+        "christian-kohler.path-intellisense",
+        "theumletteam.umlet",
+        "shd101wyy.markdown-preview-enhanced"
+    ]
+}
