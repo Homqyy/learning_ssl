@@ -72,30 +72,84 @@ ngx_http_init_connection
     ngx_http_ssl_handshake
         ngx_ssl_handshake
             SSL_do_handshake
-                if (rc = 1) 
-                    ngx_ssl_async_process_fds
-                    c->recv = ngx_ssl_recv
-                    c->send = ngx_ssl_write
-                    c->recv_chain = ngx_ssl_recv_chain
-                    c->send_chain = ngx_ssl_send_chain
-                else if (sslerr == SSL_ERROR_WANT_READ)
-                    ngx_ssl_async_process_fds
+            if (rc = 1) 
+                ngx_ssl_async_process_fds
+                c->recv = ngx_ssl_recv
+                c->send = ngx_ssl_write
+                c->recv_chain = ngx_ssl_recv_chain
+                c->send_chain = ngx_ssl_send_chain
+            else if (sslerr == SSL_ERROR_WANT_READ)
+                ngx_ssl_async_process_fds
 
-                    c->read->handler = ngx_ssl_handshake_handler
-                    c->write->handler = ngx_ssl_handshake_handler
-                else if (sslerr == SSL_ERROR_WANT_WRITE)
-                    ngx_ssl_async_process_fds
+                c->read->handler = ngx_ssl_handshake_handler
+                c->write->handler = ngx_ssl_handshake_handler
+            else if (sslerr == SSL_ERROR_WANT_WRITE)
+                ngx_ssl_async_process_fds
 
-                    c->read->handler = ngx_ssl_handshake_handler
-                    c->write->handler = ngx_ssl_handshake_handler
-                else if (sslerr == SSL_ERROR_WANT_ASYNC)
-                    c->async->handler = ngx_ssl_handshake_async_handler
-                    c->read->save_handler = c->read->handler
-                    c->read->handler = ngx_ssl_empty_handler
-                    ngx_ssl_async_process_fds
-                else
-                    error handler
+                c->read->handler = ngx_ssl_handshake_handler
+                c->write->handler = ngx_ssl_handshake_handler
+            else if (sslerr == SSL_ERROR_WANT_ASYNC)
+                c->async->handler = ngx_ssl_handshake_async_handler
+                c->read->save_handler = c->read->handler
+                c->read->handler = ngx_ssl_empty_handler
+                ngx_ssl_async_process_fds
+            else
+                error handler
 
-    ngx_http_ssl_handshake_handler
+    ngx_http_ssl_handshake_handler      # c->ssl->handler
         ngx_http_wait_request_handler
 ```
+
+`c->async` as a async event, `c->async->handler` is a event handler that will be called when `c->async_fd` is ready.
+
+`ngx_ssl_async_process_fds` will add `c->async_fd` to epoll or delete `c->async_fd` from epoll.
+
+have a alone async process in `ngx_epoll_process_events`, in other words, only running one of normal event branch and async event branch.
+
+i known `ngx_ssl_handshake_async_handler` is a async event handler, so we can look at `ngx_ssl_handshake_async_handler`:
+
+```c
+static void
+ngx_ssl_handshake_async_handler(ngx_event_t *aev)
+{
+    ngx_connection_t  *c;
+
+    c = aev->data;
+
+    ngx_log_debug0(NGX_LOG_DEBUG_EVENT, c->log, 0,
+                   "SSL handshake async handler");
+
+    aev->ready = 0;
+    aev->handler = ngx_ssl_empty_handler;
+    c->read->handler = c->read->saved_handler;
+
+    if (ngx_ssl_handshake(c) == NGX_AGAIN) {
+        return;
+    }
+
+    c->ssl->handler(c);
+}
+```
+
+Again invoke `ngx_ssl_handshake`, and `ngx_ssl_handshake` will invoke `SSL_do_handshake` again.
+
+This is different, `aev->handler = ngx_ssl_empty_handler`. Has some comment in code(ngx_event_openssl.c: 25532,2558):
+
+```c
+    /*
+     * empty the handler of async event to avoid
+     * going back to previous ssl handshake state
+     */
+    c->async->handler = ngx_ssl_empty_handler;
+```
+
+My understanded is:
+
+    - The `async->handler` is waiting that async engine is complete. If `c->async->hadler` was be callback, then should be set `c->aev->handler` to `ngx_ssl_empty_handler` to avoid going back to previous ssl handshake state, because other async fd may be ready and should go normal event handler.
+
+Next, we can look at `ngx_ssl_recv` and `ngx_ssl_write`:
+
+## Problems
+
+<!-- 何时返回 SSL_ERROR_WANT_ASYNC，并且该如何处理它？这里需要深入展开 -->
+- When to return SSL_ERROR_WANT_ASYNC, and how to deal with it? This needs to be expanded in depth.
