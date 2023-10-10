@@ -1,0 +1,26 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>20</x><y>270</y><w>280</w><h>280</h></coordinates><panel_attributes>SSL
+--
+-server
+-handshake_func
+-job: ASYNC_JOB*
+-waitctx: ASYNC_WAIT_CTX*
+-method: SSL_METHOD*
+-stream: OSSL_STREAM
+-rwstate: int
+--
++SSL_new(SSL_CTX *ctx): SSL*
++SSL_free
++SSL_Clear(): int
++SSL_set_fd(int fd): int
++SSL_up_ref: int
++SSL_dup(): SSL*
++SSL_set_ex_data(int idx, void *arg): int
++SSL_do_handshake(): int
++SSL_get_error(int ret): int
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>270</y><w>160</w><h>90</h></coordinates><panel_attributes>SSL_METHOD
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>20</x><y>50</y><w>290</w><h>90</h></coordinates><panel_attributes>SSL_CTX
+--
+-method: SSL_METHOD
+--
++SSL_ctx_new(SSL_METHOD meth): SSL_CTX</panel_attributes><additional_attributes></additional_attributes></element></diagram>
