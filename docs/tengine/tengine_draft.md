@@ -2,7 +2,34 @@
 
 ## initialize process
 
+nginx initialize ssl with `ngx_ssl_init` in `ngx_event_openssl.c`:
+
 ```text
+ngx_ssl_init
+    #if openssl version >= 1.1.0-beta3
+        OPENSSL_init_ssl
+        ERR_clear_error
+    #else
+        OPENSSL_config
+        SSL_library_init
+        SSL_load_error_strings
+        OpenSSL_add_all_algorithms
+    #endif
+
+    disable gzip compression
+
+    create indexs:
+        ngx_ssl_connection_index
+        ngx_ssl_server_conf_index
+        ngx_ssl_session_cache_index
+        ngx_ssl_ticket_keys_index
+        ngx_ssl_ocsp_index
+        ngx_ssl_certificate_index
+        ngx_ssl_next_certificate_index
+        ngx_ssl_certificate_name_index
+        ngx_ssl_stapling_index
+
+    they are used to save data in SSL_CTX or ssl connecton
 ```
 
 ## initialize vitual server
@@ -70,13 +97,24 @@ ngx_http_ssl_merge_srv_conf
 ```text
 ngx_http_init_connection
     ngx_http_ssl_handshake
-        ngx_ssl_rite
-                c->recv_chain = ngxhandshake
+        ngx_ssl_create_connection
+            SSL_CTX_get_max_early_data
+            SSL_new
+            SSL_set_fd
+
+            if (client)
+                SSL_set_connect_state
+            else
+                SSL_set_accept_state
+
+            SSL_set_ex_data(ngx_ssl_connection_index, c)
+        ngx_ssl_handshake
             SSL_do_handshake
             if (rc = 1) 
                 ngx_ssl_async_process_fds
                 c->recv = ngx_ssl_recv
-                c->send = ngx_ssl_w_ssl_recv_chain
+                c->recv_chain = ngx_ssl_recv_chain
+                c->send = ngx_ssl_write
                 c->send_chain = ngx_ssl_send_chain
             else if (sslerr == SSL_ERROR_WANT_READ)
                 ngx_ssl_async_process_fds
@@ -97,7 +135,7 @@ ngx_http_init_connection
                 error handler
 
     ngx_http_ssl_handshake_handler      # c->ssl->handler
-        ngx_http_wait_request_handler
+    ngx_http_wait_request_handler       # c->rev->handler
 ```
 
 `c->async` as a async event, `c->async->handler` is a event handler that will be called when `c->async_fd` is ready.
@@ -238,7 +276,7 @@ for(;;)
     return NGX_ERROR
     ```
 
-For process of `ngx_ssl_write`: 
+For process of `ngx_ssl_write`:
 
 - `ngx_ssl_write` is a reverse process of `ngx_ssl_recv`, and the content is basically the same.
 

@@ -95,7 +95,6 @@ Use the classic /* ... */ comment markers. Don’t use // ... markers.
      */
 ```
 
-
 Place comments above or to the right of the code they refer to. Comments referring to the code line after should be indented equally to that code line.
 
 ### Chapter 9: Macros and Enums
@@ -170,8 +169,33 @@ Use ossl_assert() in the libraries when the state can be recovered and an error 
 
 Use assert() in libraries when no error can be returned.
 
+## Terms
+
+Term | Description
+--- | ---
+PSK     | Pre-Shared Key
+ossl    | abbreviation of OpenSSL
+
+## Interface/Object
+
+Problems:
+
+- Create ex_data index in `SSL_CTX`, finally how to affect `SSL`?
+- Why is twice defined for `SSL_METHOD` and they are different?
+    - valid defined in `ssl/methods.c`
+- what is boringssl?
+
+### SSL_CTX
+
+### SSL_METHOD
+
+### SSL
+
+`SSL_set_accept_state` or `SSL_set_connect_state` will set a handshake function to `SSL.handshake_func`, the value ether is `ssl3_connect`(`SSL.method->connect`) or `ssl3_accept`(`SSL.method->accept`).
+
 ## Reference
 
 - [man1.1.1 of openssl](https://www.openssl.org/docs/man1.1.1/man3/)
 - [Coding Style of openssl](https://www.openssl.org/policies/technical/coding-style.html)
 - [Coding Style of kernel](https://www.kernel.org/doc/Documentation/process/coding-style.rst)
+- [Strategic Architecture of openssl](https://www.openssl.org/docs/OpenSSLStrategicArchitecture.html)
