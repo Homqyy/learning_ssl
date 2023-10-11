@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>20</x><y>270</y><w>280</w><h>280</h></coordinates><panel_attributes>SSL
+<diagram program="umletino" version="15.1"><zoom_level>11</zoom_level><element><id>UMLClass</id><coordinates><x>33</x><y>319</y><w>308</w><h>429</h></coordinates><panel_attributes>SSL
 --
 -server
 -handshake_func
@@ -7,6 +7,12 @@
 -method: SSL_METHOD*
 -stream: OSSL_STREAM
 -rwstate: int
+-init_buf: BUF_MEM*
+-rlayer: RECORD_LAYER
+-wbio
+-rbio
+-s3
+-d1
 --
 +SSL_new(SSL_CTX *ctx): SSL*
 +SSL_free
@@ -17,10 +23,18 @@
 +SSL_set_ex_data(int idx, void *arg): int
 +SSL_do_handshake(): int
 +SSL_get_error(int ret): int
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>270</y><w>160</w><h>90</h></coordinates><panel_attributes>SSL_METHOD
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>429</x><y>363</y><w>176</w><h>99</h></coordinates><panel_attributes>SSL_METHOD
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>20</x><y>50</y><w>290</w><h>90</h></coordinates><panel_attributes>SSL_CTX
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>33</x><y>77</y><w>319</w><h>99</h></coordinates><panel_attributes>SSL_CTX
 --
 -method: SSL_METHOD
 --
-+SSL_ctx_new(SSL_METHOD meth): SSL_CTX</panel_attributes><additional_attributes></additional_attributes></element></diagram>
++SSL_ctx_new(SSL_METHOD meth): SSL_CTX</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>374</x><y>638</y><w>176</w><h>176</h></coordinates><panel_attributes>OSSL_STREAM
+--
+-in_handshake: int
+-request_state
+-hand_state
+-state
+-write_state
+--
+</panel_attributes><additional_attributes></additional_attributes></element></diagram>

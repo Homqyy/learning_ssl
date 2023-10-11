@@ -175,6 +175,7 @@ Term | Description
 --- | ---
 PSK     | Pre-Shared Key
 ossl    | abbreviation of OpenSSL
+mt      | message type; such as ossl_statem_server_read_transition(SSL *s, int mt)
 
 ## Interface/Object
 
@@ -192,6 +193,12 @@ Problems:
 ### SSL
 
 `SSL_set_accept_state` or `SSL_set_connect_state` will set a handshake function to `SSL.handshake_func`, the value ether is `ssl3_connect`(`SSL.method->connect`) or `ssl3_accept`(`SSL.method->accept`).
+
+## state machine
+
+1. transition: checking transition state is valid or not. current state is `OSSL_STREAM.hand_state`, want to be state is`mt`(message type), if valid, then change `OSSL_STREAM.hand_state` to correct state.
+
+2. 
 
 ## Reference
 
