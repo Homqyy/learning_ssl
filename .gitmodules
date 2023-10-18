@@ -7,3 +7,6 @@
 [submodule "tengine"]
 	path = tengine
 	url = https://github.com/alibaba/tengine.git
+[submodule "tassl"]
+	path = tassl
+	url = https://github.com/jntass/TASSL-1.1.1.git

@@ -6,7 +6,8 @@ Learning SSL include teninge QAT openssl and gm
 
 - Tengine: Tag `3.0.0`
 - GMSSL: Tag `v3.1.0`
-- Openssl: `OpenSSL_1_1_1w`
+- Openssl: Tag `OpenSSL_1_1_1w`
+- TASSL-1.1.1: master
 
 ## Docs
 
@@ -22,6 +23,7 @@ Learning SSL include teninge QAT openssl and gm
 
 - [QAT](https://01.org/intel-quickassist-technology)
     - [QAT+Openssl](https://www.intel.com/content/www/us/en/content-details/706024/intel-quickassist-technology-intel-qat-and-openssl-1-1-0-performance.html?wapkw=QAT%20performance)
+- [GM Standards](https://github.com/guanzhi/GM-Standards)
 
 ### Blog
 
