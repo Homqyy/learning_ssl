@@ -10,3 +10,6 @@
 [submodule "tassl"]
 	path = tassl
 	url = https://github.com/jntass/TASSL-1.1.1.git
+[submodule "mkcert"]
+	path = mkcert
+	url = https://github.com/FiloSottile/mkcert
