@@ -1,0 +1,4 @@
+# go: GOPATH=/workspaces/learning_ssl/go-project
+go-project/bin
+go-project/pkg
+go.work
